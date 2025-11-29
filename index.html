@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tugas Ubin Fibonaci</title>
+    <style>
+      #canvas {
+        border: 1px solid black;
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+      }
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-xl bg-white rounded-2xl shadow-lg p-6 space-y-4">
+      <!-- Title -->
+      <h1 class="text-2xl font-bold text-gray-800 text-center">
+        Fibonacci Canvas Generator
+      </h1>
+
+      <!-- Input Section -->
+      <div class="flex flex-col sm:flex-row gap-3 items-center">
+        <input
+          type="number"
+          id="panjang"
+          min="1"
+          value="1"
+          class="w-full sm:flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          placeholder="Masukkan panjang"
+        />
+
+        <button
+          id="generateButton"
+          class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition"
+        >
+          Generate
+        </button>
+      </div>
+
+      <!-- Canvas Area -->
+      <div class="w-full overflow-x-auto flex justify-center">
+        <canvas id="canvas" class="max-w-full h-auto block"></canvas>
+      </div>
+    </div>
+  </body>
+
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    ctx.lineWidth = 10;
+    ctx.strokeStyle = "black";
+    const UKURAN_PIXEL = 50;
+    const MARGIN = 20;
+    function Ubin(x, y, w, h) {
+      ctx.strokeRect(x, y, w, h);
+    }
+    function draw(gambar, panjang) {
+      canvas.width = panjang * UKURAN_PIXEL + MARGIN * 2;
+      canvas.height = (2 * UKURAN_PIXEL + MARGIN) * gambar.length + MARGIN;
+      gambar.forEach((g, i) => {
+        const ofset = i * (2 * UKURAN_PIXEL + MARGIN) + MARGIN;
+        g.forEach((u) => {
+          Ubin(
+            u.x * UKURAN_PIXEL + MARGIN,
+            u.y * UKURAN_PIXEL + ofset,
+            u.w * UKURAN_PIXEL,
+            u.h * UKURAN_PIXEL
+          );
+        });
+      });
+    }
+    document.getElementById("generateButton").addEventListener("click", (e) => {
+      const panjang = document.getElementById("panjang").value || 1;
+      let gambar1 = [[{ x: 0, y: 0, w: 1, h: 2 }]];
+      let n1 = 1;
+      let gambar2 = [
+        [
+          { x: 0, y: 0, w: 2, h: 1 },
+          { x: 0, y: 1, w: 2, h: 1 },
+        ],
+        [
+          { x: 0, y: 0, w: 1, h: 2 },
+          { x: 1, y: 0, w: 1, h: 2 },
+        ],
+      ];
+      let n2 = 2;
+      let gambar3 = [];
+      let n3 = 0;
+      for (let i = 1; i < panjang; i++) {
+        gambar3 = [
+          ...[...gambar1].map((e) => {
+            let f = [...e];
+            f.push({ x: i, y: 0, w: 2, h: 1 }, { x: i, y: 1, w: 2, h: 1 });
+            return f;
+          }),
+          ...[...gambar2].map((e) => {
+            let f = [...e];
+            f.push({ x: i + 1, y: 0, w: 1, h: 2 });
+            return f;
+          }),
+        ];
+        n3 = n1 + n2;
+        gambar1 = gambar2;
+        n1 = n2;
+        gambar2 = gambar3;
+        n2 = n3;
+      }
+      draw(gambar1, panjang);
+    });
+  </script>
+</html>
